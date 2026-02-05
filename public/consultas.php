@@ -183,10 +183,15 @@ th, td {
     <td><?= $p["pisto"] ?></td>
     <td>
         <form method="POST">
-            <input type="hidden" name="id" value="<?= $p["id"] ?>">
-            <input type="checkbox" name="vendido" onchange="this.form.submit()"
-                <?= $p["vendido"] ? "checked" : "" ?>>
-        </form>
+    <input type="hidden" name="id" value="<?= $p["id"] ?>">
+    <input type="hidden" name="vendido" value="0">
+
+    <input type="checkbox"
+           name="vendido"
+           value="1"
+           onchange="this.form.submit()"
+           <?= $p["vendido"] ? "checked" : "" ?>>
+</form>
     </td>
 </tr>
 <?php endforeach; ?>
