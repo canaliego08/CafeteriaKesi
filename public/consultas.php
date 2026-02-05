@@ -14,7 +14,7 @@ $pdo = new PDO(
 // =======================
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["id"])) {
 
-    $vendido = isset($_POST["vendido"]) ? true : false;
+    $vendido = ($_POST["vendido"] === "1");
 
     $stmt = $pdo->prepare(
         "UPDATE pedidos SET vendido = :vendido WHERE id = :id"
@@ -25,7 +25,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["id"])) {
         ":id" => (int)$_POST["id"]
     ]);
 }
-
 
 // =======================
 // FILTROS
