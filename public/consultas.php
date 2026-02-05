@@ -14,7 +14,7 @@ $pdo = new PDO(
 // =======================
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["id"])) {
 
-    $vendido = ($_POST["vendido"] === "1");
+    $vendido = (isset($_POST["vendido"]) && $_POST["vendido"] === "1") ? 1 : 0;
 
     $stmt = $pdo->prepare(
         "UPDATE pedidos SET vendido = :vendido WHERE id = :id"
@@ -29,8 +29,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["id"])) {
 // =======================
 // FILTROS
 // =======================
-$desde = $_GET["desde"] ?? date("Y-m-d");
-$hasta = $_GET["hasta"] ?? date("Y-m-d");
+$desde  = $_GET["desde"]  ?? date("Y-m-d");
+$hasta  = $_GET["hasta"]  ?? date("Y-m-d");
 $estado = $_GET["estado"] ?? "todos";
 
 $where = "fecha_pedido BETWEEN :desde AND :hasta";
@@ -87,7 +87,10 @@ body {
     padding: 1rem;
 }
 
-h1 { text-align: center; }
+h1 {
+    text-align: center;
+    margin-bottom: 1rem;
+}
 
 .totales {
     display: grid;
@@ -104,27 +107,32 @@ h1 { text-align: center; }
     font-weight: bold;
 }
 
-.filtros, table {
+.filtros {
     background: white;
     padding: 1rem;
     border-radius: 10px;
     margin-bottom: 1rem;
-}
-
-.filtros {
     display: grid;
     gap: 0.8rem;
 }
 
 table {
     width: 100%;
+    background: white;
+    border-radius: 10px;
     border-collapse: collapse;
 }
 
 th, td {
-    padding: 0.4rem;
+    padding: 0.5rem;
     border-bottom: 1px solid #e5e7eb;
     text-align: center;
+}
+
+@media (max-width: 600px) {
+    .totales {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 </style>
 </head>
@@ -143,19 +151,22 @@ th, td {
 
 <!-- FILTROS -->
 <form class="filtros" method="GET">
-    <label>Desde
+    <label>
+        Desde
         <input type="date" name="desde" value="<?= $desde ?>">
     </label>
 
-    <label>Hasta
+    <label>
+        Hasta
         <input type="date" name="hasta" value="<?= $hasta ?>">
     </label>
 
-    <label>Estado
+    <label>
+        Estado
         <select name="estado">
-            <option value="todos" <?= $estado=="todos"?"selected":"" ?>>Todos</option>
-            <option value="vendidos" <?= $estado=="vendidos"?"selected":"" ?>>Vendidos</option>
-            <option value="pendientes" <?= $estado=="pendientes"?"selected":"" ?>>Pendientes</option>
+            <option value="todos" <?= $estado=="todos" ? "selected" : "" ?>>Todos</option>
+            <option value="vendidos" <?= $estado=="vendidos" ? "selected" : "" ?>>Vendidos</option>
+            <option value="pendientes" <?= $estado=="pendientes" ? "selected" : "" ?>>Pendientes</option>
         </select>
     </label>
 
@@ -181,16 +192,17 @@ th, td {
     <td><?= $p["carne"] ?></td>
     <td><?= $p["pisto"] ?></td>
     <td>
-        <form method="POST">
-    <input type="hidden" name="id" value="<?= $p["id"] ?>">
-    <input type="hidden" name="vendido" value="0">
+        <form method="post">
+            <input type="hidden" name="vendido" value="0">
 
-    <input type="checkbox"
-           name="vendido"
-           value="1"
-           onchange="this.form.submit()"
-           <?= $p["vendido"] ? "checked" : "" ?>>
-</form>
+            <input type="checkbox"
+                   name="vendido"
+                   value="1"
+                   onchange="this.form.submit()"
+                   <?= $p["vendido"] ? "checked" : "" ?>>
+
+            <input type="hidden" name="id" value="<?= $p["id"] ?>">
+        </form>
     </td>
 </tr>
 <?php endforeach; ?>
