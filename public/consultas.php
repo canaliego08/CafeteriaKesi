@@ -13,12 +13,19 @@ $pdo = new PDO(
 // ACTUALIZAR VENDIDO
 // =======================
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["id"])) {
-    $stmt = $pdo->prepare("UPDATE pedidos SET vendido = :vendido WHERE id = :id");
+
+    $vendido = isset($_POST["vendido"]) ? true : false;
+
+    $stmt = $pdo->prepare(
+        "UPDATE pedidos SET vendido = :vendido WHERE id = :id"
+    );
+
     $stmt->execute([
-        ":vendido" => isset($_POST["vendido"]),
-        ":id" => $_POST["id"]
+        ":vendido" => $vendido,
+        ":id" => (int)$_POST["id"]
     ]);
 }
+
 
 // =======================
 // FILTROS
